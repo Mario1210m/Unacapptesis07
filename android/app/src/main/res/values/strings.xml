@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bertello Track</string>
+    <string name="title_activity_main">Bertello Track</string>
+    <string name="package_name">pe.edu.bertellotrack</string>
+    <string name="custom_url_scheme">pe.edu.bertellotrack</string>
+</resources>

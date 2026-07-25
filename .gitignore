@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.android-sdk/
+.gradle-home/
+
+android/.gradle/
+android/local.properties
+android/**/build/
+
+ios/App/Pods/
+ios/App/DerivedData/
+*.xcuserstate
