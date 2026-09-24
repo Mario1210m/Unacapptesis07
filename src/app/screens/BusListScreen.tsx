@@ -1,9 +1,47 @@
-import { Bus, MapPin, Users, Gauge, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bus, MapPin, Users, Gauge, AlertCircle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router";
-import { buses } from "../data/mockData";
+import { buses as fallbackBuses, type Bus as BusModel } from "../data/mockData";
+import { transitApi } from "../data/transitApi";
 
 export function BusListScreen() {
   const navigate = useNavigate();
+  const [buses, setBuses] = useState<BusModel[]>(fallbackBuses);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [usingFallback, setUsingFallback] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const result = await transitApi.listBuses();
+        if (!active) return;
+        setBuses(result.filter(bus => bus.active).map(bus => ({
+          id: bus.id,
+          plateNumber: bus.plateNumber,
+          currentStop: bus.currentStop,
+          nextStop: bus.nextStop,
+          occupancy: bus.occupancy,
+          eta: bus.etaMinutes,
+          lat: bus.latitude,
+          lng: bus.longitude,
+          speed: bus.speedKmh,
+          status: bus.status,
+        })));
+        setUsingFallback(false);
+        setLastUpdated(new Date());
+      } catch {
+        if (active) setUsingFallback(true);
+      }
+    };
+
+    void refresh();
+    const interval = window.setInterval(refresh, 15000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
   const getOccupancyIcon = (occupancy: string) => {
     switch (occupancy) {
       case 'low': return <Users className="w-4 h-4 text-chart-4" />;
@@ -44,7 +82,15 @@ export function BusListScreen() {
     <div className="h-full flex flex-col bg-background">
       <div className="bg-card border-b border-border px-4 py-4">
         <h1 className="text-xl font-semibold text-foreground">Buses Activos</h1>
-        <p className="text-sm text-muted-foreground">Flota Ruta Bertello</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Flota Ruta Bertello</p>
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <RefreshCw className="h-3 w-3" />
+            {usingFallback
+              ? 'Modo demostración'
+              : lastUpdated.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
+          </p>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto p-4">

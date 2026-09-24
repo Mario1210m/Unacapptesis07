@@ -15,6 +15,8 @@ import {
   LocateFixed,
   MapPin,
   Navigation2,
+  RefreshCw,
+  Ruler,
   Search,
   X,
 } from "lucide-react";
@@ -231,6 +233,7 @@ export function MainMapScreen() {
   const [searchParams] = useSearchParams();
 
   const [tick, setTick] = useState(0);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(() => new Date());
   const [homeFilter, setHomeFilter] = useState<HomeFilter>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [showNearbyStops, setShowNearbyStops] = useState(false);
@@ -265,6 +268,7 @@ export function MainMapScreen() {
   useEffect(() => {
     const interval = setInterval(() => {
       setTick((current) => current + 1);
+      setLastUpdatedAt(new Date());
     }, 2200);
 
     return () => clearInterval(interval);
@@ -649,8 +653,9 @@ export function MainMapScreen() {
                     </span>
                   </p>
 
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    GPS simulado · Actualizado en tiempo real
+                  <p className="mt-1 flex items-center gap-1 text-[11px] text-slate-500" aria-live="polite">
+                    <RefreshCw className="h-3 w-3" />
+                    Actualizado {lastUpdatedAt.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </p>
                 </div>
 
@@ -690,6 +695,16 @@ export function MainMapScreen() {
                     {FARE}
                   </p>
                 </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between rounded-2xl bg-blue-50 px-3 py-2 text-sm">
+                <span className="flex items-center gap-2 text-slate-600">
+                  <Ruler className="h-4 w-4 text-primary" />
+                  Distancia al próximo paradero
+                </span>
+                <strong className="text-primary">
+                  {(selectedOrNearestBus.eta * 0.42).toFixed(1)} km
+                </strong>
               </div>
 
               <div className="mt-4 flex gap-2">

@@ -1,8 +1,10 @@
 import { User, MapPin, Bell, Star, Settings, LogOut, ChevronRight, Clock, Heart } from "lucide-react";
 import { stops } from "../data/mockData";
+import { useAuth } from "../auth/AuthContext";
 
 export function ProfileScreen() {
   const favoriteStops = stops.slice(0, 3);
+  const { user, logout } = useAuth();
 
   return (
     <div className="h-full flex flex-col bg-background overflow-auto">
@@ -12,8 +14,8 @@ export function ProfileScreen() {
             <User className="w-10 h-10" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Usuario</h1>
-            <p className="text-sm opacity-90">usuario@bertello.pe</p>
+            <h1 className="text-2xl font-bold">{user?.displayName ?? 'Usuario'}</h1>
+            <p className="text-sm opacity-90">{user?.email ?? ''}</p>
           </div>
         </div>
 
@@ -142,7 +144,11 @@ export function ProfileScreen() {
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
 
-            <button className="w-full flex items-center justify-between p-4 hover:bg-destructive/10 transition-colors group">
+            <button
+              type="button"
+              onClick={logout}
+              className="w-full flex items-center justify-between p-4 hover:bg-destructive/10 transition-colors group"
+            >
               <div className="flex items-center gap-3">
                 <LogOut className="w-5 h-5 text-destructive" />
                 <span className="font-medium text-destructive">Cerrar Sesión</span>

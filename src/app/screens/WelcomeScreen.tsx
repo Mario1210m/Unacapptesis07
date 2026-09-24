@@ -1,17 +1,19 @@
 import { useNavigate } from "react-router";
 import { Bus, MapPin, Bell, Clock } from "lucide-react";
 import { useEffect } from "react";
+import { useAuth } from "../auth/AuthContext";
 
 export function WelcomeScreen() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/app');
+      navigate(isAuthenticated ? '/app' : '/login', { replace: true });
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-secondary via-primary to-accent max-w-md mx-auto px-6">

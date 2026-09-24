@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { Home, Bus, MapPin, Bell, User } from "lucide-react";
+import { Home, Bus, MapPin, Bell, User, Settings2 } from "lucide-react";
 
 export function AppLayout() {
   const location = useLocation();
@@ -10,6 +10,7 @@ export function AppLayout() {
     { path: '/app/buses', icon: Bus, label: 'Buses' },
     { path: '/app/route', icon: MapPin, label: 'Ruta' },
     { path: '/app/alerts', icon: Bell, label: 'Alertas' },
+    { path: '/app/management', icon: Settings2, label: 'Gestión' },
     { path: '/app/profile', icon: User, label: 'Perfil' },
   ];
 
@@ -27,7 +28,7 @@ export function AppLayout() {
       </div>
 
       <nav className="bg-card border-t border-border shadow-lg">
-        <div className="flex items-center justify-around px-2 py-3">
+        <div className="flex items-center justify-around px-1 py-3">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -36,7 +37,7 @@ export function AppLayout() {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center gap-1 px-3 py-1 rounded-lg transition-colors ${
+                className={`flex flex-col items-center justify-center gap-1 px-2 py-1 rounded-lg transition-colors ${
                   active
                     ? 'text-primary'
                     : 'text-muted-foreground hover:text-foreground'
