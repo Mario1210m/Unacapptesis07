@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.npm-cache/
 .android-sdk/
 .gradle-home/
 
@@ -10,3 +11,6 @@ android/**/build/
 ios/App/Pods/
 ios/App/DerivedData/
 *.xcuserstate
+
+.env
+auth-service/target/

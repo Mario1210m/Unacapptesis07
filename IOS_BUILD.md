@@ -7,11 +7,12 @@ una IPA sin firmar usando un runner macOS de GitHub.
 
 1. Sube el proyecto completo a un repositorio de GitHub.
 2. Abre la pestaña **Actions** del repositorio.
-3. Selecciona **Build unsigned iOS IPA**.
+3. Selecciona **Build iOS demo (unsigned IPA)**.
 4. Pulsa **Run workflow** y espera a que termine.
 5. Abre la ejecución terminada y descarga el artefacto
-   **Bertello-Track-unsigned-ipa**.
-6. Descomprime el artefacto para obtener `Bertello-Track-unsigned.ipa`.
+   **Bertello-Track-demo-unsigned-ipa**.
+6. Descomprime el artefacto para obtener
+   `Bertello-Track-demo-unsigned.ipa`.
 
 ## Importante
 
@@ -21,6 +22,26 @@ cuenta gratuita, la autorización vence después de siete días y será necesari
 firmar e instalar nuevamente la aplicación.
 
 El identificador de la aplicación es `pe.edu.bertellotrack`.
+
+## Firmar e instalar temporalmente desde Windows
+
+1. Instala iTunes desde el sitio de Apple y conecta el iPhone por USB.
+2. En el iPhone, acepta **Confiar en este ordenador**.
+3. Abre Sideloadly y comprueba que el dispositivo aparezca en **iDevice**.
+4. Arrastra `Bertello-Track-demo-unsigned.ipa` a Sideloadly.
+5. Escribe tu Apple Account y pulsa **Start**. La contraseña se ingresa
+   solamente en Sideloadly; no debe guardarse en GitHub ni en el proyecto.
+6. En el iPhone, habilita el modo desarrollador si iOS lo solicita y confia
+   en el perfil desde **Ajustes > General > VPN y gestion de dispositivos**.
+
+## HTTPS temporal de demostracion
+
+El backend actual presenta un certificado no confiable. Por eso este workflow
+aplica, despues de `npm ci`, una excepcion limitada al compilado `Debug` y al
+host `bertello.137.116.64.157.nip.io`. El compilado `Release` conserva la
+validacion TLS normal. Esta excepcion es solo para la demostracion y debe
+retirarse cuando el Ingress tenga un certificado valido, antes de publicar la
+aplicacion.
 
 ## Actualizar el proyecto iOS
 
