@@ -1,11 +1,14 @@
-name: Build unsigned iOS IPA
+name: Build iOS demo (unsigned IPA)
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-ios:
-    name: Build unsigned IPA
+    name: Build demo IPA
     runs-on: macos-15
     timeout-minutes: 30
 
@@ -22,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Apply temporary demo TLS support
+        run: node scripts/patch-capacitor-ios-demo-ssl.mjs
+
+      - name: Verify backend health
+        run: curl --fail --silent --show-error --insecure https://bertello.137.116.64.157.nip.io/api/actuator/health
+
       - name: Build web application
         run: npm run build
 
@@ -29,30 +38,20 @@ jobs:
         run: npx cap sync ios
 
       - name: Build iOS application without code signing
-        run: |
-          xcodebuild \
-            -workspace ios/App/App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -sdk iphoneos \
-            -derivedDataPath build/ios \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            build
+        run: >
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -sdk iphoneos -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
 
       - name: Package unsigned IPA
         run: |
           mkdir -p build/package/Payload
-          cp -R build/ios/Build/Products/Release-iphoneos/App.app build/package/Payload/
+          cp -R build/ios/Build/Products/Debug-iphoneos/App.app build/package/Payload/
           cd build/package
-          zip -qry Bertello-Track-unsigned.ipa Payload
+          zip -qry Bertello-Track-demo-unsigned.ipa Payload
 
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: Bertello-Track-unsigned-ipa
-          path: build/package/Bertello-Track-unsigned.ipa
+          name: Bertello-Track-demo-unsigned-ipa
+          path: build/package/Bertello-Track-demo-unsigned.ipa
           if-no-files-found: error
           retention-days: 14
-
